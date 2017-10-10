@@ -4,16 +4,69 @@
 
 namespace org.acme.anthill
 
-participant User identified by email {
-  o String email
+concept Account {
+  o String address
+  o String city
+  o String state
+  o String zipcode
+  o String encryptedKey
 }
 
-asset SampleAsset identified by assetId {
-  o String assetId
-  o String value
+concept Buyer extends Account {
+  o String name
+  o Integer amountRequested
+  o Integer amountPaid
+  o Integer trackingNumber
 }
 
-transaction ChangeAssetValue {
-  o String newValue
-  --> Asset relatedAsset
+participant Store identified by hostname {
+  o String hostname
+}
+
+participant Office identified by managerId {
+  o String managerId
+  o Account homebase
+}
+
+participant Vendor identified by uuid {
+  o String uuid
+  o Account supplier
+}
+
+asset OrderSheet identified by productId {
+  o String productId
+  o Integer cost
+  o Integer amount
+  o String vendorName
+  o String dateReceived
+  o String dateRequested
+  o String dateInbound
+  o String dateOutbound
+  o Buyer[] group
+}
+
+transaction RequestFromOffice {
+  o String dateReceived
+  o String productId
+  o Integer cost
+  o Integer amount
+  o Buyer[] group
+  --> Asset orderSheet
+}
+
+transaction RequestFromVendor {
+  o String dateRequested
+  o String vendorName
+  --> Asset orderSheet
+}
+
+transaction FulfillFromVendor {
+  o String dateInbound
+  --> Asset orderSheet
+}
+
+transaction FulfillFromOffice {
+ o String dateOutbound
+ o Buyer[] receipts
+ --> Asset orderSheet
 }
