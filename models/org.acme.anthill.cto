@@ -4,19 +4,35 @@
 
 namespace org.acme.anthill
 
-concept Account {
+abstract concept Account {
+  o String uuid
+  o String name
   o String address
   o String city
   o String state
   o String zipcode
-  o String encryptedKey
 }
 
 concept Buyer extends Account {
-  o String name
+  o String username
+  o RoutingInfo shipping
+  o Invoice receipt
+}
+
+concept RoutingInfo extends Account {
+  o String trackingNumberOutbound
+  o String trackingNumberInbound
+  o String dateReceived
+  o String dateRequested
+  o String dateInbound
+  o String dateOutbound
+}
+
+concept Invoice extends Account {
   o Integer amountRequested
   o Integer amountPaid
-  o Integer trackingNumber
+  o String dateProcessed
+  o String confirmation
 }
 
 participant Store identified by hostname {
@@ -45,19 +61,20 @@ asset OrderSheet identified by productId {
   o Buyer[] group
 }
 
-transaction RequestFromOffice {
+transaction RequestToOffice {
   o String dateReceived
   o String productId
   o Integer cost
   o Integer amount
   o Buyer[] group
-  --> Asset orderSheet
+  --> OrderSheet requestToOffice
 }
 
-transaction RequestFromVendor {
+transaction RequestToVendor {
   o String dateRequested
   o String vendorName
-  --> Asset orderSheet
+  o RoutingInfo pallet
+  --> OrderSheet requestToVendor
 }
 
 transaction FulfillFromVendor {
@@ -67,6 +84,6 @@ transaction FulfillFromVendor {
 
 transaction FulfillFromOffice {
  o String dateOutbound
- o Buyer[] receipts
+ o Buyer[] customers
  --> Asset orderSheet
 }
