@@ -49,15 +49,16 @@ participant Vendor identified by uuid {
   o Account supplier
 }
 
-asset OrderSheet identified by productId {
+asset OrderSheet identified by orderId {
+  o String orderId
   o String productId
   o Integer cost
   o Integer amount
   o String vendorName
-  o String dateReceived
-  o String dateRequested
-  o String dateInbound
-  o String dateOutbound
+  o String dateReceived optional
+  o String dateRequested optional
+  o String dateInbound optional
+  o String dateOutbound optional
   o Buyer[] group
 }
 
